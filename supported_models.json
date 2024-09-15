@@ -1,0 +1,14 @@
+{
+    "convnext": {
+        "model_url": "https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger-v2/resolve/main/model.onnx",
+        "tags_url": "https://huggingface.co/SmilingWolf/wd-v1-4-convnext-tagger-v2/raw/main/selected_tags.csv"
+    },
+    "swin": {
+        "model_url": "https://huggingface.co/SmilingWolf/wd-v1-4-swinv2-tagger-v2/resolve/main/model.onnx",
+        "tags_url": "https://huggingface.co/SmilingWolf/wd-v1-4-swinv2-tagger-v2/raw/main/selected_tags.csv"
+    },
+    "vit": {
+        "model_url": "https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger-v2/resolve/main/model.onnx",
+        "tags_url": "https://huggingface.co/SmilingWolf/wd-v1-4-vit-tagger-v2/raw/main/selected_tags.csv"
+    }
+}
