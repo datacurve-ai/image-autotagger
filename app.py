@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, render_template, jsonify, abort
 from werkzeug.datastructures import FileStorage
 
-from autotagger import Autotagger
+from autotagger import Autotagger, ProcessImageException
 
 load_dotenv()
 model_path = os.getenv("MODEL_PATH", "models/model.onnx")
@@ -33,12 +33,24 @@ def evaluate():
     output: str = request.values.get("format", "json")
     limit = int(request.values.get("limit", 100))
 
-    predictions = autotagger.predict(
-        [PIL.Image.open(file.stream) for file in files],
-        general_threshold=general_threshold,
-        character_threshold=character_threshold,
-        limit=limit,
-    )
+    opened_files = []
+    for file in files:
+        try:
+            opened_files.append(PIL.Image.open(file.stream))
+        except PIL.UnidentifiedImageError:
+            abort(400, description=f"Cannot identify image file for file {file.filename}.")
+        except Exception:
+            abort(400, description=f"Unknown exception handling opening of file image, {file.filename}.")
+
+    try:
+        predictions = list(autotagger.predict(
+            opened_files,
+            general_threshold=general_threshold,
+            character_threshold=character_threshold,
+            limit=limit,
+        ))
+    except ProcessImageException as process_image_exception:
+        abort(400, description=f"Error processing image file, {process_image_exception.message}.")
 
     if output == "html":
         for file in files:

@@ -7,6 +7,11 @@ import onnxruntime as rt
 import pandas as pd
 
 
+class ProcessImageException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 def make_square(img, target_size):
     old_size = img.shape[:2]
     desired_size = max(*old_size, target_size)
@@ -31,8 +36,13 @@ def smart_resize(img, size):
 
 
 def process_image(image, height, width):
-    image = image.convert("RGBA")
-    new_image = PIL.Image.new("RGBA", image.size, "WHITE")
+    try:
+        image = image.convert("RGBA")
+        new_image = PIL.Image.new("RGBA", image.size, "WHITE")
+    except OSError as e:
+        raise ProcessImageException(str(e))
+    except Exception:
+        raise ProcessImageException("Unknown error processing image")
     new_image.paste(image, mask=image)
     image = new_image.convert("RGB")
     image = np.asarray(image)
