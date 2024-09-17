@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Status</title>
+</head>
+<body>
+    <h1>Job Status</h1>
+    <p>Job ID: {{ job_id }}</p>
+    <p>Status: {{ status }}</p>
+    {% if status == "complete" %}
+        <a href="/jobstatus?jobId={{ job_id }}">View Results</a>
+    {% endif %}
+    <a href="/">Back to home</a>
+</body>
+</html>
+
