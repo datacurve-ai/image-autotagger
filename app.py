@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, render_template, jsonify, abort
 from werkzeug.datastructures import FileStorage
 
-from autotagger import Autotagger, ProcessImageException
+from autotagger import Autotagger
 
 load_dotenv()
 model_path = os.getenv("MODEL_PATH", "models/model.onnx")
@@ -99,15 +99,12 @@ def evaluate():
         else:
             abort(400, description="Invalid output type")
 
-    try:
-        predictions = list(autotagger.predict(
-            opened_files,
-            general_threshold=general_threshold,
-            character_threshold=character_threshold,
-            limit=limit,
-        ))
-    except ProcessImageException as process_image_exception:
-        abort(400, description=f"Error processing image file, {process_image_exception.message}.")
+    predictions = list(autotagger.predict(
+        opened_files,
+        general_threshold=general_threshold,
+        character_threshold=character_threshold,
+        limit=limit,
+    ))
 
     if output == "html":
         files_in_base64 = [b64encode(file_stream).decode() for file_stream in file_streams]

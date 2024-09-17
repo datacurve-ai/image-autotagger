@@ -8,6 +8,7 @@ This project is a Flask-based web application that automatically generates tags 
 - Adjustable tag score threshold
 - Response in JSON or HTML format
 - REST API for integration with other services
+- Asynchronous job processing with status checking
 
 ## Setup
 
@@ -19,6 +20,7 @@ This project is a Flask-based web application that automatically generates tags 
    MODEL_PATH=models/model.onnx
    PORT=8000
    DEBUG=False
+   MINIMUM_WAIT_TIME_FOR_BATCHING=10
    ```
 
 2. Download the model and tags:
@@ -43,15 +45,32 @@ This project is a Flask-based web application that automatically generates tags 
 4. For API usage, send POST requests to `/evaluate`. Example using curl:
 
    ```
-   curl -X POST -F "file=@/path/to/your/image.jpg" -F "threshold=0.5" -F "format=json" http://localhost:8000/evaluate
+   curl -X POST -F "file=@/path/to/your/image.jpg" -F "threshold=0.5" -F "format=json" -F "get_id=true" http://localhost:8000/evaluate
    ```
 
-   This command uploads an image file, sets the tag threshold to 0.5, and requests JSON output.
+   This command uploads an image file, sets the tag threshold to 0.5, requests JSON output, and asks for a job ID for asynchronous processing.
 
    Parameters:
 
    - `file`: The image file to upload (can be specified multiple times for batch processing)
    - `threshold`: The minimum confidence score for tags (default: 0.1)
+   - `get_id`: Whether to return a job ID for asynchronous processing (default: false)
+
+   The API will return either:
+   If `get_id` is false:
+   - A JSON array of objects, each containing the filename and its associated tags
+   If `get_id` is true:
+   - A JSON object with a `jobId` field (if `get_id` is true)
+
+5. (Optional if done as a job) To check the status of an asynchronous job, use the `/jobstatus` endpoint:
+
+   ```
+   curl "http://localhost:8000/jobstatus?jobId=your-job-id&format=json"
+   ```
+
+   Parameters:
+
+   - `jobId`: The job ID returned from the initial request
    - `format`: Output format, either 'json' or 'html' (default: 'json')
 
-   The API will return a JSON array of objects, each containing the filename and its associated tags.
+   This will return the job status and results if the job is complete.
