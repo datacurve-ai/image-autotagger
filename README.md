@@ -8,6 +8,7 @@ This project is a Flask-based web application that automatically generates tags 
 - Adjustable tag score threshold
 - Response in JSON or HTML format
 - REST API for integration with other services
+- Batch evaluating requests for optimal gpu utilization 
 
 ## Setup
 
@@ -55,3 +56,4 @@ This project is a Flask-based web application that automatically generates tags 
    - `format`: Output format, either 'json' or 'html' (default: 'json')
 
    The API will return a JSON array of objects, each containing the filename and its associated tags.
+   The API might be delayed for up to ``MINIMUM_WAIT_TIME_FOR_BATCHING`` seconds due to optimization on batch evaluating.

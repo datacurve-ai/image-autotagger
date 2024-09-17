@@ -69,12 +69,12 @@ class Autotagger:
         input_name = inputs.name
         label_name = self.model.get_outputs()[0].name
 
-        filenames = [image.filename for image in images]
-        images = [process_image(image, height, width) for image in images]
+        batched_images = np.vstack([process_image(image, height, width) for image in images])
 
-        for filename, image in zip(filenames, images):
-            probs = self.model.run([label_name], {input_name: image})[0]
-            labels = list(zip(self.tag_names, probs[0].astype(float)))
+        batch_probs = self.model.run([label_name], {input_name: batched_images})[0]
+
+        for probs in batch_probs:
+            labels = list(zip(self.tag_names, probs.astype(float)))
 
             ratings = (
                 pd.DataFrame(
