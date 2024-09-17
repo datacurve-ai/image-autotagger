@@ -6,3 +6,4 @@ Flask==2.3.3
 pandas==2.2.2
 onnxruntime==1.19.2
 gunicorn==23.0.0
+Werkzeug==3.0.4
